@@ -1,0 +1,26 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
+.about-banner{
+    width: 100%;
+    height: 100vh;
+    background-image: url(C:\Users\saint\Downloads\aboutimage.jpg);
+    background-size: cover;
+    background-position: center;
+
+}
+.navbar{
+    width: 250px;
+    margin: auto;
+    padding: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position:absolute;
+    top: 10px;
+    left: 0px;
+}
