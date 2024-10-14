@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Style.css">
+    <title>Thank You!</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+        .thank-you-message {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .loading-cloud {
+            width: 150px;
+            height: 100px;
+            background: url('cloud.png') no-repeat center center; /* Use your cloud image */
+            background-size: contain;
+            margin: 0 auto;
+            position: relative;
+        }
+        .timer {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        // Redirect to home after 5 seconds
+        let countdown = 5;
+        function startCountdown() {
+            const timerElement = document.getElementById('timer');
+            timerElement.innerText = countdown;
+
+            const interval = setInterval(() => {
+                countdown--;
+                timerElement.innerText = countdown;
+
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    window.location.href = 'index.html'; // Redirect to homepage
+                }
+            }, 1000);
+        }
+
+        window.onload = startCountdown;
+    </script>
+</head>
+<body>
+    <div class="thank-you-message">
+        <h1>Thank You for Your Submission!</h1>
+        <p>We appreciate your message and will get back to you shortly.</p>
+    </div>
+
+    <div class="loading-cloud">
+        <div class="timer" id="timer">5</div>
+    </div>
+</body>
+</html>
