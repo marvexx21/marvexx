@@ -235,3 +235,37 @@ button:hover {
 .support-link:hover {
     background-color: darkred;
 }
+@media (max-width: 600px) {
+    body {
+        font-size: 14px; /* Adjust the base font size */
+        padding: 0 10px; /* Add padding to the sides */
+    }
+
+    .navbar {
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start; /* Align to the left */
+        width: 100%; /* Make navbar full width */
+    }
+
+    .navbar ul {
+        padding: 0; /* Remove padding */
+        margin: 0; /* Remove margin */
+        width: 100%; /* Make the list full width */
+    }
+
+    .navbar li {
+        margin-bottom: 10px; /* Space between links */
+        width: 100%; /* Make each link full width */
+    }
+
+    .contact-container,
+    .banner {
+        padding: 10px; /* Add padding for these sections */
+        text-align: left; /* Align text to the left */
+    }
+
+    img {
+        max-width: 100%; /* Ensure images are responsive */
+        height: auto; /* Maintain aspect ratio */
+    }
+}
