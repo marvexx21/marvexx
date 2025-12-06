@@ -1,0 +1,106 @@
+/* GENERAL STYLING */
+body {
+    margin: 0;
+    font-family: 'Libre Baskerville', serif;
+    background-image: url("homepage.jpeg"); /* CHANGE THIS */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* SIDEBAR MENU (DESKTOP VIEW) */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    padding-top: 70px;
+    transition: 0.3s;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 20px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 10px;
+    display: block;
+    transition: 0.2s;
+}
+
+.sidebar ul li a:hover {
+    background: rgba(255,255,255,0.2);
+    padding-left: 20px;
+}
+
+/* HERO TEXT */
+.hero-text {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: right;
+    color: white;
+}
+
+.hero-text h1 {
+    font-size: 60px;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+
+/* MOBILE MENU ICON */
+.mobile-menu-icon {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 35px;
+    color: white;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+
+    /* Hide sidebar until menu button is tapped */
+    .sidebar {
+        left: -250px;
+        width: 200px;
+        background: rgba(0,0,0,0.8);
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .mobile-menu-icon {
+        display: block;
+    }
+
+    /* Move hero text to top center */
+    .hero-text {
+        position: relative;
+        top: 120px;
+        right: 0;
+        transform: none;
+        text-align: center;
+        width: 100%;
+    }
+
+    .hero-text h1 {
+        font-size: 40px;
+    }
+}

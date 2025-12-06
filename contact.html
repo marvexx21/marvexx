@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Your CSS -->
+    <style>
+        /* Contact Page Styling */
+        .contact-container {
+            margin-left: 240px; /* leave room for sidebar */
+            padding: 80px 40px;
+            color: white;
+            max-width: 800px;
+        }
+
+        .contact-container h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            background: rgba(0,0,0,0.6);
+            padding: 25px 30px;
+            border-radius: 12px;
+            font-size: 20px;
+            line-height: 1.8;
+        }
+
+        .contact-info strong {
+            font-size: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                margin-left: 0;
+                padding: 40px 20px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="schedule.html">Schedule</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Mobile Menu Icon -->
+    <div class="mobile-menu-icon" onclick="toggleMenu()">☰</div>
+
+    <!-- Contact Section -->
+    <div class="contact-container">
+        <h1>Contact Us</h1>
+
+        <div class="contact-info">
+            <p><strong>Phone:</strong> (209) 850-6342</p>
+            <p><strong>Email:</strong> marvexx@outlook.com</p>
+            <p><strong>Local:</strong> Modesto,California</p>
+            <p><strong>Call Hours:</strong> Mon–Fri 12pm–12:45pm | 5:15pm-7pm</p>
+            <p><strong>Text Hours:</strong> Mon–Sun 24/7</p>
+            <p>Text is recommended due to ongoing appointments or scheduled calls</p>
+            <p>Thank you so much!</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>
+

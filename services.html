@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Use your CSS file -->
+    <style>
+        /* Service Containers */
+        .services {
+            margin-left: 240px; /* leave space for sidebar */
+            padding: 50px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .service-card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .services {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="schedule.html">Schedule</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Mobile Menu Icon -->
+    <div class="mobile-menu-icon" onclick="toggleMenu()">☰</div>
+
+    <!-- Services Section -->
+    <div class="services">
+        <div class="service-card">
+            <h2>Tax Preparation I</h2>
+            <p>1040 & 540 Tax filing using DrakeTax.</p>
+            <p>Simple Returns</p>
+            <p>$75</p>
+        </div>
+        <div class="service-card">
+            <h2>Tax Preparation II</h2>
+            <p>1040 & 540 Tax filing using DrakeTax.</p>
+            <p>Intermediate Returns</p>
+            <p>$100</p>
+        </div>
+        <div class="service-card">
+            <h2>Tax Preparation III</h2>
+            <p>1040 & 540 Tax filing using DrakeTax.</p>
+            <p>Moderate Returns</p>
+            <p>$175</p>
+        </div>
+        <div class="service-card">
+            <h2>Tax Prepation IV</h2>
+            <p>1040 & 540 Tax filing using DrakeTax.</p>
+            <p>Advanced Returns</p>
+            <p>$225</p>
+        </div>
+        <div class="service-card">
+            <h2>Bookkeeping I</h2>
+            <p>Entering financial data</p>
+            <p>to spreadsheets</p>
+            <p>Account Categorizing</p>
+            <p>1 Bank Account</p>
+            <p>$100 Monthly</p>
+        </div>
+        <div class="service-card">
+            <h2>Bookkeeping II</h2>
+            <p>Entering financial data.</p>
+            <p>to spreadsheets</p>
+            <p>Financial Statements</p>
+            <p>1 Bank Account</p>
+            <p>$200 Monthly</p>
+        </div>
+        <div class="service-card">
+            <h2>Bookkeeping III</h2>
+            <p>Entering financial data</p>
+            <p>to spreadsheets</p>
+            <p>Account Categorizing</p>
+            <p>Payroll 1-5 Employees</p>
+            <p>W-4 or I-9 Assistance</p>
+            <p>Payroll Tax Calculating</p>
+            <p>Financial Statements</p>
+            <p>1 Bank Account</p>
+            <p>$500 Monthly</p>
+        </div>
+        <div class="service-card">
+            <h2>Special Issue</h2>
+            <p>Have questions? </p>
+            <p>Contact us on our</p>
+            <p>"Contanct Us" Page</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
