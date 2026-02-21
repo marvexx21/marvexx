@@ -155,7 +155,7 @@
 </div>
 
 <script>
-function loginUser(event) {
+async function loginUser(event) {
   event.preventDefault();
 
   const email = document.getElementById("email").value.trim();
@@ -164,32 +164,31 @@ function loginUser(event) {
 
   errorBox.textContent = "";
 
-  // Basic validation
   if (!email || !password) {
     errorBox.textContent = "Please enter both email and password.";
     return;
   }
 
-  // Check if user exists (localStorage system)
-  const storedEmail = localStorage.getItem("email");
-  const storedPlan = localStorage.getItem("plan") || "free";
+  const response = await fetch("/.netlify/functions/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-  if (email !== storedEmail) {
-    errorBox.textContent = "Account not found.";
+  const result = await response.json();
+
+  if (!result.success) {
+    errorBox.textContent = result.error || "Invalid login.";
     return;
   }
 
-  // Mark user as logged in
+  // Save session
   localStorage.setItem("loggedIn", "true");
+  localStorage.setItem("user_id", result.user.id);
+  localStorage.setItem("email", result.user.email);
 
-  // Redirect based on plan
-  if (storedPlan === "suite") {
-    window.location.href = "suite.html";
-  } else if (storedPlan === "pro") {
-    window.location.href = "pro.html";
-  } else {
-    window.location.href = "free.html";
-  }
+  // Redirect to free plan for now
+  window.location.href = "free.html";
 }
 </script>
 
