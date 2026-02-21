@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marvexx Financial – Login</title>
+
+<style>
+  :root {
+    --accent: #3f5fa8;
+    --accent-light: #e4e8f5;
+    --bg-light: #f5f5f5;
+    --border-light: #d0d0d0;
+    --text-main: #111111;
+    --text-muted: #555555;
+    --error: #8b0000;
+    --success: #1b7a3a;
+    --shadow-soft: 0 4px 12px rgba(0,0,0,0.08);
+    --radius: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: #f0f2f7;
+    color: var(--text-main);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #2f447f, #3f5fa8);
+    color: white;
+    box-shadow: var(--shadow-soft);
+  }
+
+  header .logo {
+    width: 48px;
+    height: 48px;
+    background-image: url('logo.png'); /* or 'img/logo.png' if in a folder */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+    box-shadow: var(--shadow-soft);
+  }
+
+
+  header h1 {
+    font-size: 1.6rem;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .container {
+    max-width: 420px;
+    margin: 60px auto;
+    background: white;
+    padding: 32px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+  }
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+    color: var(--accent);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #2f447f;
+  }
+
+  .links {
+    text-align: center;
+    margin-top: 16px;
+  }
+
+  .links a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
+  }
+
+  .error-message {
+    color: var(--error);
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"></div>
+  <h1>Marvexx Financial</h1>
+</header>
+
+<div class="container">
+  <h2>Sign In</h2>
+
+  <div id="errorBox" class="error-message"></div>
+
+  <form onsubmit="loginUser(event)">
+    <label>Email</label>
+    <input type="email" id="email" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <button type="submit">Login</button>
+  </form>
+
+  <div class="links">
+    <p>Don’t have an account? <a href="register.html">Register</a></p>
+  </div>
+</div>
+
+<script>
+function loginUser(event) {
+  event.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorBox = document.getElementById("errorBox");
+
+  errorBox.textContent = "";
+
+  // Basic validation
+  if (!email || !password) {
+    errorBox.textContent = "Please enter both email and password.";
+    return;
+  }
+
+  // Check if user exists (localStorage system)
+  const storedEmail = localStorage.getItem("email");
+  const storedPlan = localStorage.getItem("plan") || "free";
+
+  if (email !== storedEmail) {
+    errorBox.textContent = "Account not found.";
+    return;
+  }
+
+  // Mark user as logged in
+  localStorage.setItem("loggedIn", "true");
+
+  // Redirect based on plan
+  if (storedPlan === "suite") {
+    window.location.href = "suite.html";
+  } else if (storedPlan === "pro") {
+    window.location.href = "pro.html";
+  } else {
+    window.location.href = "free.html";
+  }
+}
+</script>
+
+</body>
+</html>

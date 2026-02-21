@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marvexx Financial – Home</title>
+
+<style>
+  :root {
+    --accent: #3f5fa8;
+    --accent2: #2f447f;
+    --bg: #f4f6fb;
+    --text: #111;
+    --muted: #555;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+    box-shadow: var(--shadow);
+  }
+
+  .logo {
+    height: 55px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  header button {
+    padding: 12px 26px;
+    background: white;
+    color: var(--accent2);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.25s;
+    font-weight: 600;
+  }
+
+  header button:hover {
+    background: #e8ebf7;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    padding: 60px 50px;
+    gap: 50px;
+    align-items: center;
+  }
+
+  /* HERO IMAGE */
+  .hero-image {
+    width: 80%;
+    height: 100%;
+    background: url('office.jpg') center/cover no-repeat;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+
+  /* CONTENT */
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .content h2 {
+    font-size: 2.6rem;
+    color: var(--accent2);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .content p {
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* FEATURES */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .feature-box {
+    background: white;
+    padding: 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  .feature-box h4 {
+    margin: 0;
+    color: var(--accent2);
+    font-size: 1.25rem;
+  }
+
+  .feature-box p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  /* SIMPLE LINKS */
+  .simple-links {
+    margin-top: 10px;
+    text-align: left;
+  }
+
+  .simple-links a {
+    display: block;
+    font-weight: bold;
+    color: var(--accent2);
+    text-decoration: none;
+    margin-bottom: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .simple-links a:hover {
+    color: var(--accent);
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .main {
+      grid-template-columns: 1fr;
+      padding: 40px 20px;
+    }
+    .hero-image {
+      height: 260px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="logo.png" class="logo">
+  <h1>Marvexx Financial</h1>
+  <button onclick="goToTool()">Open Accounting Tool</button>
+</header>
+
+<div class="main">
+
+  <div class="hero-image"></div>
+
+  <div class="content">
+    <h2>Where Accounting Meets Innovation</h2>
+    <p>
+      Marvexx Financial delivers a powerful, intuitive, and beautifully designed accounting experience.
+      Built for individuals and businesses who want clarity, control, and confidence in their finances.
+    </p>
+
+    <div class="features">
+      <div class="feature-box">
+        <h4>Beautifully Simple</h4>
+        <p>Clean, intuitive, and designed for clarity.</p>
+      </div>
+
+      <div class="feature-box">
+        <h4>Powerful Tools</h4>
+        <p>Advanced accounting features at your fingertips.</p>
+      </div>
+
+      <div class="feature-box">
+        <h4>Secure & Reliable</h4>
+        <p>Your data is protected with modern encryption.</p>
+      </div>
+    </div>
+
+    <div class="simple-links">
+      <a href="support.html">Support</a>
+      <a href="videos.html">Video Tutorials</a>
+      <a href="social.html">Social Link 1</a>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Marvexx Financial. All rights reserved.
+</footer>
+
+<script>
+  function goToTool() {
+    const plan = localStorage.getItem("plan");
+    const loggedIn = localStorage.getItem("loggedIn");
+
+    if (!loggedIn) {
+      window.location.href = "access.html";
+      return;
+    }
+
+    if (plan === "suite") {
+      window.location.href = "suite.html";
+    } else if (plan === "pro") {
+      window.location.href = "pro.html";
+    } else {
+      window.location.href = "free.html";
+    }
+  }
+</script>
+
+</body>
+</html>
