@@ -178,7 +178,7 @@
 
   <div id="errorBox" class="error-message"></div>
 
-  <form onsubmit="createAccount(event)">
+  <form id="registerForm">
     <label>Email</label>
     <input type="email" id="email" required>
 
@@ -213,7 +213,6 @@
     Account created successfully! Redirecting...
   </div>
 </div>
-
 <script>
 function checkStrength() {
   const pass = document.getElementById("password").value;
@@ -233,7 +232,7 @@ function checkStrength() {
   else fill.style.background = "#1b7a3a";
 }
 
-function createAccount(event) {
+document.getElementById("registerForm").addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const email = document.getElementById("email").value.trim();
@@ -263,19 +262,26 @@ function createAccount(event) {
     return;
   }
 
-  // Save user info
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("email", email);
-  localStorage.setItem("plan", "free");
+  const response = await fetch("/.netlify/functions/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
 
-  // Show success animation
-  document.getElementById("successBox").style.display = "block";
+  const result = await response.json();
 
-  setTimeout(() => {
-    window.location.href = "free.html";
-  }, 1500);
-}
+  if (result.success) {
+    document.getElementById("successBox").style.display = "block";
+    setTimeout(() => {
+      window.location.href = "access.html";
+    }, 1500);
+  } else {
+    errorBox.textContent = result.error;
+  }
+});
 </script>
+
+
 
 </body>
 </html>
