@@ -717,7 +717,7 @@
     }
 
     try {
-      const res = await fetch('/.netlify/functions/save-account', {
+      const res = await fetch('/netlify/functions/save-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, name })
@@ -754,7 +754,7 @@
     }
 
     try {
-      const res = await fetch('/.netlify/functions/save-reference', {
+      const res = await fetch('/netlify/functions/save-reference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
@@ -1017,7 +1017,7 @@
     const description = document.getElementById('journalDescription').value.trim();
 
     try {
-      const res = await fetch('/.netlify/functions/save-entry', {
+      const res = await fetch('/netlify/functions/save-entry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description, totalDebit, totalCredit, lines })
