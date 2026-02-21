@@ -712,39 +712,79 @@
   });
 
   // COA logic
-  document.getElementById('addAccountBtn').addEventListener('click', () => {
+  document.getElementById('addAccountBtn').addEventListener('click', async () => {
     const type = document.getElementById('accountType').value;
     const name = document.getElementById('accountName').value.trim();
     const statusEl = document.getElementById('accountStatus');
+
     if (!name) {
       showStatus(statusEl, 'Account name is required.', true);
       return;
     }
+
     if (accounts.some(a => a.name.toLowerCase() === name.toLowerCase())) {
       showStatus(statusEl, 'Account already exists.', true);
       return;
     }
-    accounts.push({ type, name });
-    document.getElementById('accountName').value = '';
-    updateAccountsUI();
-    showStatus(statusEl, 'Account added.', false);
+
+    try {
+      const res = await fetch('/.netlify/functions/save-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, name })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        showStatus(statusEl, result.error || 'Failed to save.', true);
+        return;
+      }
+
+      accounts.push({ type, name });
+      document.getElementById('accountName').value = '';
+      updateAccountsUI();
+      showStatus(statusEl, 'Saved to cloud.', false);
+    } catch {
+      showStatus(statusEl, 'Network error.', true);
+    }
   });
 
-  document.getElementById('addReferenceBtn').addEventListener('click', () => {
+  document.getElementById('addReferenceBtn').addEventListener('click', async () => {
     const name = document.getElementById('referenceName').value.trim();
     const statusEl = document.getElementById('referenceStatus');
+
     if (!name) {
       showStatus(statusEl, 'Reference name is required.', true);
       return;
     }
+
     if (references.some(r => r.toLowerCase() === name.toLowerCase())) {
       showStatus(statusEl, 'Reference already exists.', true);
       return;
     }
-    references.push(name);
-    document.getElementById('referenceName').value = '';
-    updateAccountsUI();
-    showStatus(statusEl, 'Reference added.', false);
+
+    try {
+      const res = await fetch('/.netlify/functions/save-reference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        showStatus(statusEl, result.error || 'Failed.', true);
+        return;
+      }
+
+      references.push(name);
+      document.getElementById('referenceName').value = '';
+      updateAccountsUI();
+      showStatus(statusEl, 'Saved to cloud.', false);
+    } catch {
+      showStatus(statusEl, 'Network error.', true);
+    }
   });
 
   // Export helpers
@@ -956,7 +996,7 @@
     document.querySelector('.nav-tab[data-target="coa-view"]').click();
   });
 
-  document.getElementById('saveEntryBtn').addEventListener('click', () => {
+  document.getElementById('saveEntryBtn').addEventListener('click', async () => {
     let totalDebit = 0;
     let totalCredit = 0;
     const lines = [];
@@ -971,7 +1011,6 @@
       if (!date && !account && !ref && !debit && !credit) return;
 
       lines.push({ date, account, ref, debit, credit });
-
       totalDebit += debit;
       totalCredit += credit;
     });
@@ -988,21 +1027,26 @@
 
     const description = document.getElementById('journalDescription').value.trim();
 
-    journalEntries.push({
-      id: journalEntries.length + 1,
-      lines,               // ✅ THIS WAS MISSING
-      description,
-      totalDebit,
-      totalCredit,
-    });
+    try {
+      const res = await fetch('/.netlify/functions/save-entry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description, totalDebit, totalCredit, lines })
+      });
 
-    localStorage.setItem("journalEntries", JSON.stringify(journalEntries)); // ✅ SAVE
+      const result = await res.json();
 
-    document.getElementById('clearEntryBtn').click();
-    alert('Entry saved.');
-    renderHistory();
+      if (!res.ok) {
+        alert(result.error || 'Failed to save entry.');
+        return;
+      }
+
+      document.getElementById('clearEntryBtn').click();
+      alert('Entry saved to cloud.');
+    } catch (err) {
+      alert('Network error. Entry not saved.');
+    }
   });
-
 
   // Keyboard navigation: Tab/Shift+Tab/Arrows/Enter handled by browser mostly.
   // We just ensure Delete clears cell.
