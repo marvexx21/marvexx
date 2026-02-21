@@ -214,74 +214,78 @@
   </div>
 </div>
 <script>
-function checkStrength() {
-  const pass = document.getElementById("password").value;
-  const fill = document.getElementById("strengthFill");
+document.addEventListener("DOMContentLoaded", () => {
 
-  let strength = 0;
-  if (pass.length >= 6) strength++;
-  if (pass.match(/[A-Z]/)) strength++;
-  if (pass.match(/[0-9]/)) strength++;
-  if (pass.match(/[^A-Za-z0-9]/)) strength++;
+  function checkStrength() {
+    const pass = document.getElementById("password").value;
+    const fill = document.getElementById("strengthFill");
 
-  const percent = (strength / 4) * 100;
-  fill.style.width = percent + "%";
+    let strength = 0;
+    if (pass.length >= 6) strength++;
+    if (pass.match(/[A-Z]/)) strength++;
+    if (pass.match(/[0-9]/)) strength++;
+    if (pass.match(/[^A-Za-z0-9]/)) strength++;
 
-  if (percent < 40) fill.style.background = "#8b0000";
-  else if (percent < 70) fill.style.background = "#c9a000";
-  else fill.style.background = "#1b7a3a";
-}
+    const percent = (strength / 4) * 100;
+    fill.style.width = percent + "%";
 
-document.getElementById("registerForm").addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const confirm = document.getElementById("confirm_password").value;
-  const errorBox = document.getElementById("errorBox");
-
-  errorBox.textContent = "";
-
-  if (!email.includes("@") || !email.includes(".")) {
-    errorBox.textContent = "Please enter a valid email address.";
-    return;
+    if (percent < 40) fill.style.background = "#8b0000";
+    else if (percent < 70) fill.style.background = "#c9a000";
+    else fill.style.background = "#1b7a3a";
   }
 
-  if (password !== confirm) {
-    errorBox.textContent = "Passwords do not match.";
-    return;
-  }
+  document.getElementById("password").addEventListener("input", checkStrength);
 
-  if (!document.getElementById("terms").checked) {
-    errorBox.textContent = "You must agree to the Terms & Conditions.";
-    return;
-  }
+  document.getElementById("registerForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-  if (!document.getElementById("email_opt_in").checked) {
-    errorBox.textContent = "Promotional email opt-in is required for Free plan.";
-    return;
-  }
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirm_password").value;
+    const errorBox = document.getElementById("errorBox");
 
-  const response = await fetch("/netlify/functions/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email })
+    errorBox.textContent = "";
+
+    if (!email.includes("@") || !email.includes(".")) {
+      errorBox.textContent = "Please enter a valid email address.";
+      return;
+    }
+
+    if (password !== confirm) {
+      errorBox.textContent = "Passwords do not match.";
+      return;
+    }
+
+    if (!document.getElementById("terms").checked) {
+      errorBox.textContent = "You must agree to the Terms & Conditions.";
+      return;
+    }
+
+    if (!document.getElementById("email_opt_in").checked) {
+      errorBox.textContent = "Promotional email opt-in is required for Free plan.";
+      return;
+    }
+
+    const response = await fetch("/.netlify/functions/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      document.getElementById("successBox").style.display = "block";
+      setTimeout(() => {
+        window.location.href = "access.html";
+      }, 1500);
+    } else {
+      errorBox.textContent = result.error;
+    }
   });
 
-  const result = await response.json();
-
-  if (result.success) {
-    document.getElementById("successBox").style.display = "block";
-    setTimeout(() => {
-      window.location.href = "access.html";
-    }, 1500);
-  } else {
-    errorBox.textContent = result.error;
-  }
 });
 </script>
-
-
 
 </body>
 </html>
