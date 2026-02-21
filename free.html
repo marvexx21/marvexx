@@ -47,23 +47,12 @@
       box-shadow: var(--shadow-soft);
     }
 
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-placeholder {
-      width: 40px;
-      height: 40px;
+    .logo {
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      border: 2px dashed rgba(255,255,255,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      text-transform: uppercase;
-      opacity: 0.9;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     .app-title {
@@ -432,7 +421,9 @@
 </head>
 <body>
 <header>
-  <img src="logo.png" class="logo">
+  <div class="logo-area">
+    <img src="logo.png" class="logo">
+    <div>
       <div class="app-title">Marvexx Financial Journal</div>
       <div style="font-size:11px; opacity:0.85;">Double-entry Accounting Tool</div>
     </div>
