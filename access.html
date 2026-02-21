@@ -182,12 +182,10 @@ async function loginUser(event) {
     return;
   }
 
-  // Save session
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("user_id", result.user.id);
   localStorage.setItem("email", result.user.email);
 
-  // Redirect to free plan for now
   window.location.href = "free.html";
 }
 </script>
