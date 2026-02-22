@@ -9,39 +9,42 @@
     --accent: #3f5fa8;
     --accent-dark: #2f447f;
     --accent-light: #e4e8f5;
-    --bg: #eef1f8;
+    --bg1: #eef1f8;
+    --bg2: #dfe4f2;
     --text-main: #111;
     --text-muted: #666;
-    --error: #b00020;
-    --success: #1b7a3a;
-    --radius: 10px;
-    --shadow: 0 6px 20px rgba(0,0,0,0.12);
+    --error: #d62828;
+    --success: #2a9d8f;
+    --radius: 12px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
 
   * {
     box-sizing: border-box;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
   }
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--text-main);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   header {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 18px 32px;
+    padding: 20px 40px;
     background: linear-gradient(135deg, var(--accent-dark), var(--accent));
     color: white;
     box-shadow: var(--shadow);
   }
 
   header .logo {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
     background-image: url('logo.png');
     background-size: cover;
     background-position: center;
@@ -50,15 +53,16 @@
   }
 
   header h1 {
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     margin: 0;
     font-weight: 600;
   }
 
   .container {
-    max-width: 450px;
-    margin: 70px auto;
-    background: white;
+    width: 420px;
+    margin: 60px auto;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
     padding: 40px 36px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
@@ -66,39 +70,74 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
   h2 {
-    margin-top: 0;
     text-align: center;
     color: var(--accent-dark);
-    font-size: 1.6rem;
-    font-weight: 600;
+    font-size: 1.7rem;
+    margin-bottom: 25px;
   }
 
-  label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: var(--text-muted);
+  .field {
+    position: relative;
+    margin-bottom: 26px;
   }
 
-  input {
+  .field input {
     width: 100%;
-    padding: 14px;
+    padding: 16px 12px 10px;
     border: 1px solid #cfd3df;
     border-radius: var(--radius);
-    margin-bottom: 20px;
     font-size: 1rem;
+    background: white;
     transition: 0.2s;
   }
 
-  input:focus {
+  .field input:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-light);
     outline: none;
+  }
+
+  .field label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: 0.2s;
+    pointer-events: none;
+  }
+
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 10px;
+    background: white;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    color: var(--accent-dark);
+  }
+
+  /* Password Strength Bar */
+  .strength-bar {
+    height: 8px;
+    width: 100%;
+    background: #ddd;
+    border-radius: 6px;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .strength-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--error);
+    transition: width 0.3s ease, background 0.3s ease;
   }
 
   button {
@@ -163,11 +202,20 @@
   <div id="successBox" class="success-message"></div>
 
   <form onsubmit="registerUser(event)">
-    <label>Email Address</label>
-    <input type="email" id="email" placeholder="you@example.com" required>
+    
+    <div class="field">
+      <input type="email" id="email" placeholder=" " required>
+      <label>Email Address</label>
+    </div>
 
-    <label>Password</label>
-    <input type="password" id="password" placeholder="Enter a secure password" required>
+    <div class="field">
+      <input type="password" id="password" placeholder=" " required oninput="checkStrength()">
+      <label>Password</label>
+    </div>
+
+    <div class="strength-bar">
+      <div id="strengthFill" class="strength-fill"></div>
+    </div>
 
     <button type="submit">Create Account</button>
   </form>
@@ -178,6 +226,25 @@
 </div>
 
 <script>
+function checkStrength() {
+  const pw = document.getElementById("password").value;
+  const bar = document.getElementById("strengthFill");
+
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+  const percent = (score / 5) * 100;
+  bar.style.width = percent + "%";
+
+  if (percent < 40) bar.style.background = "#d62828";
+  else if (percent < 70) bar.style.background = "#f4a261";
+  else bar.style.background = "#2a9d8f";
+}
+
 async function registerUser(event) {
   event.preventDefault();
 
@@ -188,11 +255,6 @@ async function registerUser(event) {
 
   errorBox.textContent = "";
   successBox.textContent = "";
-
-  if (!email || !password) {
-    errorBox.textContent = "Please enter both email and password.";
-    return;
-  }
 
   const response = await fetch("/.netlify/functions/register", {
     method: "POST",
