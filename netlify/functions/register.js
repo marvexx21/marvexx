@@ -7,31 +7,35 @@ const supabase = createClient(
 
 export async function handler(event) {
   try {
-    const { email } = JSON.parse(event.body);
+    const { email, password } = JSON.parse(event.body);
 
-    if (!email) {
+    if (!email || !password) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Email is required' })
+        body: JSON.stringify({ error: 'Email and password are required' })
       };
     }
 
-    const { data, error } = await supabase
-      .from('users')
-      .insert([{ email }])
-      .select();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
     if (error) {
       return {
-        statusCode: 500,
+        statusCode: 401,
         body: JSON.stringify({ error: error.message })
       };
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, user: data[0] })
+      body: JSON.stringify({
+        success: true,
+        user: data.user
+      })
     };
+
   } catch (err) {
     return {
       statusCode: 500,
