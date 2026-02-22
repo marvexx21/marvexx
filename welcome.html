@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Welcome to Marvexx Financial</title>
+
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #2f447f, #3f5fa8);
+    color: white;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+
+  .box {
+    background: rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  #timer {
+    font-size: 1.3rem;
+    margin-top: 10px;
+    opacity: 0.9;
+  }
+</style>
+</head>
+
+<body>
+  <div class="box">
+    <h1>Welcome to Marvexx Financial</h1>
+    <p>Your dashboard is being prepared.</p>
+    <p id="timer">Redirecting in 10...</p>
+  </div>
+
+<script>
+let time = 10;
+const timer = document.getElementById("timer");
+
+const countdown = setInterval(() => {
+  time--;
+  timer.textContent = `Redirecting in ${time}...`;
+
+  if (time <= 0) {
+    clearInterval(countdown);
+    window.location.href = "comingsoon.html";
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
