@@ -2,26 +2,26 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY   // must match Netlify variable name
+  process.env.SUPABASE_SERVICE_KEY
 );
 
 export async function handler(event) {
   try {
-    const { user_id, name } = JSON.parse(event.body);
+    const { user_id, name } = JSON.parse(event.body || "{}");
 
-    if (!user_id) {
+    if (!user_id || !name) {
       return {
         statusCode: 400,
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Headers": "Content-Type"
         },
-        body: JSON.stringify({ error: "Missing user_id" })
+        body: JSON.stringify({ error: "Missing user_id or name" })
       };
     }
 
     const { error } = await supabase
-      .from('references')
+      .from("references")
       .insert([{ user_id, name }]);
 
     if (error) throw error;
