@@ -717,10 +717,12 @@
     }
 
     try {
+      const user_id = localStorage.getItem("user_id");
+
       const res = await fetch('/.netlify/functions/save-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, name })
+        body: JSON.stringify({ user_id, type, name })
       });
 
       const result = await res.json();
@@ -754,13 +756,16 @@
     }
 
     try {
+      const user_id = localStorage.getItem("user_id");
+
       const res = await fetch('/.netlify/functions/save-reference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ user_id, name })
       });
 
       const result = await res.json();
+
 
       if (!res.ok) {
         showStatus(statusEl, result.error || 'Failed.', true);
@@ -1017,13 +1022,16 @@
     const description = document.getElementById('journalDescription').value.trim();
 
     try {
-      const res = await fetch('/.netlify/functions/save-entry', {
+      const user_id = localStorage.getItem("user_id");
+
+      const res = await fetch('/.netlify/functions/save-reference', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, totalDebit, totalCredit, lines })
+        body: JSON.stringify({ user_id, name })
       });
 
       const result = await res.json();
+
 
       if (!res.ok) {
         alert(result.error || 'Failed to save entry.');
