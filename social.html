@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Marvexx Financial – Social</title>
+
+<style>
+  :root {
+    --accent: #3f5fa8;
+    --accent2: #2f447f;
+    --bg: #f4f6fb;
+    --text: #111;
+    --muted: #555;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+    box-shadow: var(--shadow);
+  }
+
+  .logo {
+    height: 55px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 600;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 60px auto;
+    background: white;
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: var(--accent2);
+    font-size: 2rem;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+
+  .social-box {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+
+  .social-box a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .social-box a:hover {
+    color: var(--accent);
+  }
+
+  footer {
+    padding: 14px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: auto;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <img src="logo.png" class="logo">
+  <h1>Marvexx Financial</h1>
+</header>
+
+<div class="container">
+  <h2>Connect With Us</h2>
+  <p>Stay updated with Marvexx Financial through our official social channels.</p>
+
+  <div class="social-box">
+    <a href="https://instagram.com/marvexxfinancial" target="_blank">
+      Instagram: @marvexxfinancial
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Marvexx Financial. All rights reserved.
+</footer>
+
+</body>
+</html>
