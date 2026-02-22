@@ -12,10 +12,6 @@ export async function handler(event) {
     if (!email || !password) {
       return {
         statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type"
-        },
         body: JSON.stringify({ error: "Email and password are required" })
       };
     }
@@ -28,20 +24,12 @@ export async function handler(event) {
     if (error) {
       return {
         statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "Content-Type"
-        },
         body: JSON.stringify({ error: error.message })
       };
     }
 
     return {
       statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
       body: JSON.stringify({
         success: true,
         user: data.user
@@ -51,10 +39,6 @@ export async function handler(event) {
   } catch (err) {
     return {
       statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type"
-      },
       body: JSON.stringify({ error: "Server error" })
     };
   }
