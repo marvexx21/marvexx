@@ -2,15 +2,27 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY   // make sure this matches Netlify
+  process.env.SUPABASE_SERVICE_KEY
 );
 
 export async function handler(event) {
   try {
-    const { user_id, description, totalDebit, totalCredit, lines } = JSON.parse(event.body);
+    const { user_id, description, totalDebit, totalCredit, lines } =
+      JSON.parse(event.body || "{}");
+
+    if (!user_id || !description || !Array.isArray(lines)) {
+      return {
+        statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
+        body: JSON.stringify({ error: "Missing user_id, description, or lines" })
+      };
+    }
 
     const { data: entry, error: entryError } = await supabase
-      .from('journal_entries')
+      .from("journal_entries")
       .insert([{
         user_id,
         description,
@@ -24,6 +36,7 @@ export async function handler(event) {
 
     const rows = lines.map(l => ({
       entry_id: entry.id,
+      user_id,
       date: l.date,
       account: l.account,
       ref: l.ref,
@@ -32,7 +45,7 @@ export async function handler(event) {
     }));
 
     const { error: linesError } = await supabase
-      .from('journal_lines')
+      .from("journal_lines")
       .insert(rows);
 
     if (linesError) throw linesError;
