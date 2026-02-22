@@ -7,36 +7,54 @@ const supabase = createClient(
 
 export async function handler(event) {
   try {
-    const { email, password } = JSON.parse(event.body);
+    const { email, password } = JSON.parse(event.body || "{}");
 
     if (!email || !password) {
       return {
         statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
         body: JSON.stringify({ error: "Email and password are required" })
       };
     }
 
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("email", email)
-      .single();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-    if (error || !data) {
+    if (error) {
       return {
-        statusCode: 404,
-        body: JSON.stringify({ error: "Account not found" })
+        statusCode: 401,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "Content-Type"
+        },
+        body: JSON.stringify({ error: error.message })
       };
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, user: data })
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
+      body: JSON.stringify({
+        success: true,
+        user: data.user
+      })
     };
 
   } catch (err) {
     return {
       statusCode: 500,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type"
+      },
       body: JSON.stringify({ error: "Server error" })
     };
   }
