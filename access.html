@@ -42,14 +42,13 @@
   header .logo {
     width: 48px;
     height: 48px;
-    background-image: url('logo.png'); /* or 'img/logo.png' if in a folder */
+    background-image: url('logo.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 50%;
     box-shadow: var(--shadow-soft);
   }
-
 
   header h1 {
     font-size: 1.6rem;
@@ -182,6 +181,7 @@ async function loginUser(event) {
     return;
   }
 
+  // Store real Supabase Auth user ID
   localStorage.setItem("loggedIn", "true");
   localStorage.setItem("user_id", result.user.id);
   localStorage.setItem("email", result.user.email);
