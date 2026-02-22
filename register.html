@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Marvexx Financial – Create Account</title>
+<title>Marvexx Financial – Register</title>
 
 <style>
   :root {
@@ -57,7 +57,7 @@
   }
 
   .container {
-    max-width: 480px;
+    max-width: 420px;
     margin: 60px auto;
     background: white;
     padding: 32px;
@@ -77,42 +77,13 @@
     font-weight: 500;
   }
 
-  input[type="email"],
-  input[type="password"] {
+  input {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     font-size: 1rem;
-  }
-
-  .strength-bar {
-    height: 6px;
-    width: 100%;
-    background: #ddd;
-    border-radius: 4px;
-    margin-bottom: 16px;
-    overflow: hidden;
-  }
-
-  .strength-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--error);
-    transition: 0.3s;
-  }
-
-  .checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
-  }
-
-  .checkbox input {
-    margin-top: 4px;
   }
 
   button {
@@ -148,24 +119,16 @@
 
   .error-message {
     color: var(--error);
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-  }
-
-  .success-box {
-    display: none;
+    margin-bottom: 12px;
     text-align: center;
-    padding: 20px;
-    background: var(--success);
-    color: white;
-    border-radius: var(--radius);
-    margin-top: 20px;
-    animation: fadeIn 0.5s ease;
+    font-size: 0.95rem;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  .success-message {
+    color: var(--success);
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 0.95rem;
   }
 </style>
 </head>
@@ -178,117 +141,67 @@
 </header>
 
 <div class="container">
-  <h2>Create Your Account</h2>
+  <h2>Create Account</h2>
 
   <div id="errorBox" class="error-message"></div>
+  <div id="successBox" class="success-message"></div>
 
-  <form id="registerForm">
+  <form onsubmit="registerUser(event)">
     <label>Email</label>
     <input type="email" id="email" required>
 
     <label>Password</label>
-    <input type="password" id="password" required oninput="checkStrength()">
+    <input type="password" id="password" required>
 
-    <div class="strength-bar">
-      <div class="strength-fill" id="strengthFill"></div>
-    </div>
-
-    <label>Confirm Password</label>
-    <input type="password" id="confirm_password" required>
-
-    <div class="checkbox">
-      <input type="checkbox" id="terms" required>
-      <label>I agree to the <a href="terms.html" target="_blank">Terms & Conditions</a>.</label>
-    </div>
-
-    <div class="checkbox">
-      <input type="checkbox" id="email_opt_in" required>
-      <label>I agree to receive promotional emails (required for Free plan access).</label>
-    </div>
-
-    <button type="submit">Create Account</button>
+    <button type="submit">Register</button>
   </form>
 
   <div class="links">
-    <p>Already have an account? <a href="access.html">Sign in</a></p>
-  </div>
-
-  <div id="successBox" class="success-box">
-    Account created successfully! Redirecting...
+    <p>Already have an account? <a href="login.html">Login</a></p>
   </div>
 </div>
+
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+async function registerUser(event) {
+  event.preventDefault();
 
-  function checkStrength() {
-    const pass = document.getElementById("password").value;
-    const fill = document.getElementById("strengthFill");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorBox = document.getElementById("errorBox");
+  const successBox = document.getElementById("successBox");
 
-    let strength = 0;
-    if (pass.length >= 6) strength++;
-    if (pass.match(/[A-Z]/)) strength++;
-    if (pass.match(/[0-9]/)) strength++;
-    if (pass.match(/[^A-Za-z0-9]/)) strength++;
+  errorBox.textContent = "";
+  successBox.textContent = "";
 
-    const percent = (strength / 4) * 100;
-    fill.style.width = percent + "%";
-
-    if (percent < 40) fill.style.background = "#8b0000";
-    else if (percent < 70) fill.style.background = "#c9a000";
-    else fill.style.background = "#1b7a3a";
+  if (!email || !password) {
+    errorBox.textContent = "Please enter both email and password.";
+    return;
   }
 
-  document.getElementById("password").addEventListener("input", checkStrength);
-
-  document.getElementById("registerForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirm = document.getElementById("confirm_password").value;
-    const errorBox = document.getElementById("errorBox");
-
-    errorBox.textContent = "";
-
-    if (!email.includes("@") || !email.includes(".")) {
-      errorBox.textContent = "Please enter a valid email address.";
-      return;
-    }
-
-    if (password !== confirm) {
-      errorBox.textContent = "Passwords do not match.";
-      return;
-    }
-
-    if (!document.getElementById("terms").checked) {
-      errorBox.textContent = "You must agree to the Terms & Conditions.";
-      return;
-    }
-
-    if (!document.getElementById("email_opt_in").checked) {
-      errorBox.textContent = "Promotional email opt-in is required for Free plan.";
-      return;
-    }
-
-    const response = await fetch("/.netlify/functions/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      document.getElementById("successBox").style.display = "block";
-      setTimeout(() => {
-        window.location.href = "access.html";
-      }, 1500);
-    } else {
-      errorBox.textContent = result.error;
-    }
+  const response = await fetch("/.netlify/functions/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
   });
 
-});
+  const result = await response.json();
+
+  if (!result.success) {
+    errorBox.textContent = result.error || "Registration failed.";
+    return;
+  }
+
+  // Store Supabase user ID
+  localStorage.setItem("loggedIn", "true");
+  localStorage.setItem("user_id", result.user.id);
+  localStorage.setItem("email", result.user.email);
+
+  successBox.textContent = "Account created! Redirecting...";
+
+  setTimeout(() => {
+    window.location.href = "free.html";
+  }, 800);
+}
 </script>
 
 </body>
