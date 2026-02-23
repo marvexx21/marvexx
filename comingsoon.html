@@ -35,13 +35,41 @@
     font-size: 1.1rem;
     opacity: 0.9;
   }
+
+  .btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: white;
+    color: #2f447f;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    opacity: 0.9;
+  }
 </style>
+
+<script>
+  // Auto redirect after 3 seconds
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 3000);
+</script>
 </head>
 
 <body>
   <div class="box">
     <h1>Coming Soon</h1>
     <p>Your Marvexx Financial dashboard is almost ready.</p>
+    <p>Redirecting you back to the home page...</p>
+
+    <button class="btn" onclick="window.location.href='index.html'">
+      Return Now
+    </button>
   </div>
 </body>
 </html>
