@@ -6,26 +6,23 @@ const supabase = createClient(
 )
 
 exports.handler = async (event) => {
-  const { email, password } = JSON.parse(event.body || "{}")
+  const { name, email, password } = JSON.parse(event.body || "{}")
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signUp({
     email,
-    password
+    password,
+    options: { data: { name } }
   })
 
   if (error) {
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: false, error: "invalid_credentials" })
+      body: JSON.stringify({ success: false, error: error.message })
     }
   }
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      success: true,
-      user: data.user,
-      session: data.session
-    })
+    body: JSON.stringify({ success: true, user: data.user })
   }
 }
