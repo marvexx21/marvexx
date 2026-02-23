@@ -719,13 +719,13 @@
     try {
       const user_id = localStorage.getItem("user_id");
 
-      const res = await fetch('/.netlify/functions/save-journal', {
+      const res = await fetch('/.netlify/functions/save-account', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id,
-          lines,
-          description
+          type,
+          name
         })
       });
 
@@ -1028,7 +1028,7 @@
     try {
       const user_id = localStorage.getItem("user_id");
 
-      const res = await fetch('/.netlify/functions/save-reference', {
+      const res = await fetch('/.netlify/functions/save-journal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user_id, name })
