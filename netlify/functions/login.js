@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js')
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -6,7 +6,7 @@ const supabase = createClient(
 )
 
 exports.handler = async (event) => {
-  const { email, password } = JSON.parse(event.body)
+  const { email, password } = JSON.parse(event.body || "{}")
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -16,10 +16,7 @@ exports.handler = async (event) => {
   if (error) {
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        success: false,
-        error: "invalid_credentials"
-      })
+      body: JSON.stringify({ success: false, error: "invalid_credentials" })
     }
   }
 
@@ -27,7 +24,8 @@ exports.handler = async (event) => {
     statusCode: 200,
     body: JSON.stringify({
       success: true,
-      user: data.user
+      user: data.user,
+      session: data.session
     })
   }
 }
