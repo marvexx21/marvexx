@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   const user_id = event.queryStringParameters.user_id
 
   const { data, error } = await supabase
-    .from('references')
+    .from('entry_references')
     .select('name')
     .eq('user_id', user_id)
 
