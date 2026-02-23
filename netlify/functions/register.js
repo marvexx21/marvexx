@@ -6,35 +6,17 @@ const supabase = createClient(
 )
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" }
-  }
+  const { email, password } = JSON.parse(event.body || "{}")
 
-  const { name, email, password } = JSON.parse(event.body || "{}")
-
-  if (!email || !password) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: false, error: "missing_fields" })
-    }
-  }
-
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
-    password,
-    options: {
-      data: { name }
-    }
+    password
   })
 
   if (error) {
-    // email already used, invalid, etc.
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        success: false,
-        error: "email_exists"
-      })
+      body: JSON.stringify({ success: false, error: "invalid_credentials" })
     }
   }
 
@@ -42,7 +24,8 @@ exports.handler = async (event) => {
     statusCode: 200,
     body: JSON.stringify({
       success: true,
-      user: data.user
+      user: data.user,
+      session: data.session
     })
   }
 }
