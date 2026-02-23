@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Marvexx Financial – Sign In</title>
+<title>Marvexx Financial – Access Dashboard</title>
 
 <style>
   :root {
@@ -96,7 +96,7 @@
 
   .field input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
+    box-shadow: 0 0 0 3px rgba(63,95,168,0.15);
     outline: none;
   }
 
@@ -157,6 +157,7 @@
     margin-bottom: 12px;
     text-align: center;
     font-size: 0.95rem;
+    min-height: 20px;
   }
 </style>
 </head>
@@ -169,7 +170,7 @@
 </header>
 
 <div class="container">
-  <h2>Sign In</h2>
+  <h2>Access Dashboard</h2>
 
   <div id="errorBox" class="error-message"></div>
 
@@ -184,11 +185,12 @@
       <label>Password</label>
     </div>
 
-    <button type="submit">Login</button>
+    <button type="submit">Access Dashboard</button>
   </form>
 
   <div class="links">
-    <p>Don’t have an account? <a href="register.html">Create one</a></p>
+    <p>Don’t have an account? <a href="register.html">Create Account</a></p>
+    <p><a href="forgot.html">Forgot Password?</a></p>
   </div>
 </div>
 
@@ -211,7 +213,13 @@ async function loginUser(event) {
   const result = await response.json();
 
   if (!result.success) {
-    errorBox.textContent = result.error || "Invalid login.";
+    if (result.error === "account_not_found") {
+      errorBox.textContent = "Account not found.";
+    } else if (result.error === "invalid_password") {
+      errorBox.textContent = "Account or password invalid.";
+    } else {
+      errorBox.textContent = "Invalid login.";
+    }
     return;
   }
 
