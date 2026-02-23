@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Marvexx Financial – Reset Password</title>
+<title>Marvexx Financial – Forgot Password</title>
 
 <style>
   :root {
@@ -18,17 +18,12 @@
     --shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
 
-  * {
-    box-sizing: border-box;
-    font-family: "Inter", system-ui, sans-serif;
-  }
+  * { box-sizing: border-box; font-family: "Inter", system-ui, sans-serif; }
 
   body {
     margin: 0;
     background: linear-gradient(135deg, var(--bg1), var(--bg2));
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
 
   header {
@@ -42,70 +37,35 @@
   }
 
   header .logo {
-    width: 54px;
-    height: 54px;
+    width: 54px; height: 54px;
     background-image: url('logo.png');
     background-size: cover;
-    background-position: center;
     border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  }
-
-  header h1 {
-    font-size: 1.8rem;
-    margin: 0;
-    font-weight: 600;
   }
 
   .container {
     width: 420px;
     margin: 70px auto;
     background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(12px);
     padding: 40px 36px;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    animation: fadeIn 0.4s ease-out;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  h2 { text-align: center; color: var(--accent-dark); }
 
-  h2 {
-    text-align: center;
-    color: var(--accent-dark);
-    font-size: 1.7rem;
-    margin-bottom: 25px;
-  }
-
-  .field {
-    position: relative;
-    margin-bottom: 26px;
-  }
+  .field { position: relative; margin-bottom: 26px; }
 
   .field input {
     width: 100%;
     padding: 16px 12px 10px;
     border: 1px solid #cfd3df;
     border-radius: var(--radius);
-    font-size: 1rem;
-    background: white;
-    transition: 0.2s;
-  }
-
-  .field input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(63,95,168,0.15);
-    outline: none;
   }
 
   .field label {
     position: absolute;
-    top: 14px;
-    left: 14px;
-    font-size: 0.95rem;
+    top: 14px; left: 14px;
     color: var(--text-muted);
     transition: 0.2s;
     pointer-events: none;
@@ -113,8 +73,7 @@
 
   .field input:focus + label,
   .field input:not(:placeholder-shown) + label {
-    top: -8px;
-    left: 10px;
+    top: -8px; left: 10px;
     background: white;
     padding: 0 6px;
     font-size: 0.75rem;
@@ -130,43 +89,14 @@
     border-radius: var(--radius);
     font-size: 1.15rem;
     cursor: pointer;
-    transition: 0.2s;
-    font-weight: 600;
   }
 
-  button:hover {
-    background: var(--accent-dark);
-  }
+  .message { text-align: center; margin-bottom: 12px; }
+  .error { color: var(--error); }
+  .success { color: var(--success); }
 
-  .message {
-    text-align: center;
-    font-size: 0.95rem;
-    margin-bottom: 12px;
-    min-height: 20px;
-  }
-
-  .error {
-    color: var(--error);
-  }
-
-  .success {
-    color: var(--success);
-  }
-
-  .links {
-    text-align: center;
-    margin-top: 18px;
-  }
-
-  .links a {
-    color: var(--accent-dark);
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .links a:hover {
-    text-decoration: underline;
-  }
+  .links { text-align: center; margin-top: 18px; }
+  .links a { color: var(--accent-dark); text-decoration: none; }
 </style>
 </head>
 
@@ -178,11 +108,11 @@
 </header>
 
 <div class="container">
-  <h2>Reset Password</h2>
+  <h2>Forgot Password</h2>
 
   <div id="msgBox" class="message"></div>
 
-  <form onsubmit="resetPassword(event)">
+  <form onsubmit="sendReset(event)">
     <div class="field">
       <input type="email" id="email" placeholder=" " required>
       <label>Email Address</label>
@@ -192,12 +122,12 @@
   </form>
 
   <div class="links">
-    <p><a href="access.html">Back to Login</a></p>
+    <a href="access.html">Back to Login</a>
   </div>
 </div>
 
 <script>
-async function resetPassword(event) {
+async function sendReset(event) {
   event.preventDefault();
 
   const email = document.getElementById("email").value.trim();
