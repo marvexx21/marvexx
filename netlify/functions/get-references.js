@@ -9,9 +9,9 @@ exports.handler = async (event) => {
   const user_id = event.queryStringParameters.user_id
 
   const { data, error } = await supabase
-    .from('entry_references')
-    .select('name')
-    .eq('user_id', user_id)
+    .from("account_references")
+    .select("*")
+    .eq("user_id", user_id)
 
   if (error) {
     return { statusCode: 500, body: JSON.stringify({ error: error.message }) }
