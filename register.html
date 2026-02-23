@@ -8,13 +8,11 @@
   :root {
     --accent: #3f5fa8;
     --accent-dark: #2f447f;
-    --accent-light: #e4e8f5;
     --bg1: #eef1f8;
     --bg2: #dfe4f2;
     --text-main: #111;
     --text-muted: #666;
     --error: #d62828;
-    --success: #2a9d8f;
     --radius: 12px;
     --shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
@@ -59,8 +57,8 @@
   }
 
   .container {
-    width: 420px;
-    margin: 60px auto;
+    width: 450px;
+    margin: 70px auto;
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(12px);
     padding: 40px 36px;
@@ -98,7 +96,7 @@
 
   .field input:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
+    box-shadow: 0 0 0 3px rgba(63,95,168,0.15);
     outline: none;
   }
 
@@ -122,22 +120,19 @@
     color: var(--accent-dark);
   }
 
-  /* Password Strength Bar */
-  .strength-bar {
-    height: 8px;
-    width: 100%;
-    background: #ddd;
-    border-radius: 6px;
-    margin-top: -10px;
-    margin-bottom: 20px;
-    overflow: hidden;
+  .checkbox-group {
+    margin-bottom: 18px;
+    font-size: 0.95rem;
+    color: var(--text-main);
   }
 
-  .strength-fill {
-    height: 100%;
-    width: 0%;
-    background: var(--error);
-    transition: width 0.3s ease, background 0.3s ease;
+  .checkbox-group a {
+    color: var(--accent-dark);
+    text-decoration: none;
+  }
+
+  .checkbox-group a:hover {
+    text-decoration: underline;
   }
 
   button {
@@ -157,6 +152,14 @@
     background: var(--accent-dark);
   }
 
+  .error-message {
+    color: var(--error);
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+    min-height: 20px;
+  }
+
   .links {
     text-align: center;
     margin-top: 18px;
@@ -171,20 +174,6 @@
   .links a:hover {
     text-decoration: underline;
   }
-
-  .error-message {
-    color: var(--error);
-    margin-bottom: 12px;
-    text-align: center;
-    font-size: 0.95rem;
-  }
-
-  .success-message {
-    color: var(--success);
-    margin-bottom: 12px;
-    text-align: center;
-    font-size: 0.95rem;
-  }
 </style>
 </head>
 
@@ -196,88 +185,89 @@
 </header>
 
 <div class="container">
-  <h2>Create Your Account</h2>
+  <h2>Create Account</h2>
 
   <div id="errorBox" class="error-message"></div>
-  <div id="successBox" class="success-message"></div>
 
   <form onsubmit="registerUser(event)">
-    
+    <div class="field">
+      <input type="text" id="name" placeholder=" " required>
+      <label>Full Name</label>
+    </div>
+
     <div class="field">
       <input type="email" id="email" placeholder=" " required>
       <label>Email Address</label>
     </div>
 
     <div class="field">
-      <input type="password" id="password" placeholder=" " required oninput="checkStrength()">
+      <input type="password" id="password" placeholder=" " required>
       <label>Password</label>
     </div>
 
-    <div class="strength-bar">
-      <div id="strengthFill" class="strength-fill"></div>
+    <div class="field">
+      <input type="password" id="confirmPassword" placeholder=" " required>
+      <label>Confirm Password</label>
+    </div>
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="agreeTerms"> I agree to the <a href="terms.html">Terms & Conditions</a></label>
+    </div>
+
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="confirmRead"> I confirm I read and understand the Terms & Conditions</label>
     </div>
 
     <button type="submit">Create Account</button>
   </form>
 
   <div class="links">
-    <p>Already registered? <a href="login.html">Sign in</a></p>
+    <p>Already have an account? <a href="access.html">Sign In</a></p>
   </div>
 </div>
 
 <script>
-function checkStrength() {
-  const pw = document.getElementById("password").value;
-  const bar = document.getElementById("strengthFill");
-
-  let score = 0;
-  if (pw.length >= 6) score++;
-  if (pw.length >= 10) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-
-  const percent = (score / 5) * 100;
-  bar.style.width = percent + "%";
-
-  if (percent < 40) bar.style.background = "#d62828";
-  else if (percent < 70) bar.style.background = "#f4a261";
-  else bar.style.background = "#2a9d8f";
-}
-
 async function registerUser(event) {
   event.preventDefault();
 
+  const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
+  const confirmPassword = document.getElementById("confirmPassword").value.trim();
+  const agreeTerms = document.getElementById("agreeTerms").checked;
+  const confirmRead = document.getElementById("confirmRead").checked;
   const errorBox = document.getElementById("errorBox");
-  const successBox = document.getElementById("successBox");
 
   errorBox.textContent = "";
-  successBox.textContent = "";
+
+  if (!agreeTerms || !confirmRead) {
+    errorBox.textContent = "You must agree and confirm the Terms & Conditions.";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    errorBox.textContent = "Passwords do not match.";
+    return;
+  }
 
   const response = await fetch("/.netlify/functions/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ name, email, password })
   });
 
   const result = await response.json();
 
   if (!result.success) {
-    errorBox.textContent = result.error || "Registration failed.";
+    if (result.error === "email_exists") {
+      errorBox.textContent = "An account with this email already exists.";
+    } else {
+      errorBox.textContent = result.error || "Unable to create account.";
+    }
     return;
   }
 
-  localStorage.setItem("loggedIn", "true");
-  localStorage.setItem("user_id", result.user.id);
-  localStorage.setItem("email", result.user.email);
-
-  successBox.textContent = "Account created! Redirecting...";
-
-  setTimeout(() => {
-    window.location.href = "welcome.html";
-  }, 900);
+  window.location.href = "welcome.html";
 }
 </script>
 
