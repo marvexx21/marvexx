@@ -21,14 +21,22 @@ exports.handler = async (event) => {
       .from('journal_entries')
       .select('*')
       .eq('user_id', user_id)
-      .order('created_at', { ascending: false })
+      .order('date', { ascending: true })
 
     if (entryError) throw entryError
 
-    // Load lines
+    // Load lines + join accounts
     const { data: lines, error: lineError } = await supabase
       .from('journal_lines')
-      .select('*')
+      .select(`
+        id,
+        entry_id,
+        account_id,
+        debit,
+        credit,
+        accounts ( name )
+      `)
+      .eq('user_id', user_id)
 
     if (lineError) throw lineError
 
