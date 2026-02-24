@@ -758,6 +758,19 @@
     }
   });
 
+  async function loadReferences() {
+    const user_id = localStorage.getItem("user_id");
+
+    const res = await fetch(`/.netlify/functions/loadReferences?user_id=${user_id}`);
+    const result = await res.json();
+
+    if (result.success) {
+      references = result.references.map(r => r.name);
+      updateAccountsUI();
+    }
+  }
+
+  loadReferences();
 
   document.getElementById('addReferenceBtn').addEventListener('click', async () => {
     const name = document.getElementById('referenceName').value.trim();
@@ -784,8 +797,7 @@
 
       const result = await res.json();
 
-
-      if (!res.ok) {
+      if (!result.success) {
         showStatus(statusEl, result.error || 'Failed.', true);
         return;
       }
@@ -794,10 +806,12 @@
       document.getElementById('referenceName').value = '';
       updateAccountsUI();
       showStatus(statusEl, 'Saved to cloud.', false);
+
     } catch {
       showStatus(statusEl, 'Network error.', true);
     }
   });
+
 
   // Export helpers
   function downloadCsv(filename, rows) {
@@ -1014,15 +1028,13 @@
     const lines = [];
 
     [...journalBody.querySelectorAll('tr')].forEach(tr => {
-      const date = tr.children[0].querySelector('input').value;
-      const account = tr.children[1].querySelector('input').value.trim();
-      const ref = tr.children[2].querySelector('input').value.trim();
+      const account_name = tr.children[1].querySelector('input').value.trim();
       const debit = parseMoney(tr.children[3].querySelector('input').value);
       const credit = parseMoney(tr.children[4].querySelector('input').value);
 
-      if (!date && !account && !ref && !debit && !credit) return;
+      if (!account_name && !debit && !credit) return;
 
-      lines.push({ date, account, ref, debit, credit });
+      lines.push({ account_name, debit, credit });
       totalDebit += debit;
       totalCredit += credit;
     });
@@ -1042,16 +1054,15 @@
     try {
       const user_id = localStorage.getItem("user_id");
 
-      const res = await fetch('/.netlify/functions/save-journal', {
+      const res = await fetch('/.netlify/functions/saveEntry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id, name })
+        body: JSON.stringify({ user_id, description, lines })
       });
 
       const result = await res.json();
 
-
-      if (!res.ok) {
+      if (!result.success) {
         alert(result.error || 'Failed to save entry.');
         return;
       }
@@ -1062,6 +1073,7 @@
       alert('Network error. Entry not saved.');
     }
   });
+
 
   // Keyboard navigation: Tab/Shift+Tab/Arrows/Enter handled by browser mostly.
   // We just ensure Delete clears cell.
@@ -1094,9 +1106,8 @@
     }
   });
 
-  // History
+//HISTORY
   function renderHistory(filteredEntries) {
-    // Fallback if nothing was passed or storage is empty
     if (!Array.isArray(filteredEntries)) {
       filteredEntries = Array.isArray(journalEntries) ? journalEntries : [];
     }
@@ -1110,11 +1121,11 @@
       entry.lines.forEach(line => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${line.date || ''}</td>
+          <td>${entry.date || ''}</td>
           <td>${line.account || ''}</td>
-          <td>${line.ref || ''}</td>
-          <td>${line.debit && line.debit !== 0 ? formatMoney(line.debit) : ''}</td>
-          <td>${line.credit && line.credit !== 0 ? formatMoney(line.credit) : ''}</td>
+          <td>${entry.ref || ''}</td>
+          <td>${line.debit ? formatMoney(line.debit) : ''}</td>
+          <td>${line.credit ? formatMoney(line.credit) : ''}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -1129,46 +1140,45 @@
     });
   }
 
+  // =============================
+  // EXPORT CSV
+  // =============================
+
   document.getElementById('exportHistoryCsvBtn').addEventListener('click', () => {
     const rows = [['Date', 'Account', 'Ref', 'Debit', 'Credit']];
 
     journalEntries.forEach(entry => {
       entry.lines.forEach(line => {
         rows.push([
-          line.date || '',
+          entry.date || '',
           line.account || '',
-          line.ref || '',
-          line.debit && line.debit !== 0 ? line.debit : '',
-          line.credit && line.credit !== 0 ? line.credit : ''
+          entry.ref || '',
+          line.debit || '',
+          line.credit || ''
         ]);
       });
 
-      // Description row under ACCOUNT column
-      rows.push([
-        '', 
-        entry.description || '',  // <-- description now under Account column
-        '', 
-        '', 
-        ''
-      ]);
-
-      // Blank row between entries
+      rows.push(['', entry.description || '', '', '', '']);
       rows.push(['', '', '', '', '']);
     });
 
     downloadCsv('journal_history.csv', rows);
   });
 
+  // =============================
+  // FILTER
+  // =============================
+
   document.getElementById('filterBtn').addEventListener('click', () => {
     const from = document.getElementById('filterFrom').value;
     const to = document.getElementById('filterTo').value;
 
     const filtered = journalEntries.filter(entry => {
-      const entryDate = entry.lines[0]?.date;
-      if (!entryDate) return false;
+      const d = entry.date;
+      if (!d) return false;
 
-      if (from && entryDate < from) return false;
-      if (to && entryDate > to) return false;
+      if (from && d < from) return false;
+      if (to && d > to) return false;
 
       return true;
     });
@@ -1176,64 +1186,59 @@
     renderHistory(filtered);
   });
 
+  // =============================
+  // PRINT
+  // =============================
 
   document.getElementById('printHistoryBtn').addEventListener('click', () => {
     window.print();
   });
+
   // =============================
-  // LOAD DATA FROM CLOUD
+  // LOAD JOURNAL FROM CLOUD
   // =============================
 
-  async function loadAccountsFromCloud() {
+  async function loadJournal() {
     const user_id = localStorage.getItem("user_id");
-    if (!user_id) return;
 
-    try {
-      const res = await fetch(`/.netlify/functions/get-accounts?user_id=${user_id}`);
-      const result = await res.json();
+    const res = await fetch(`/.netlify/functions/loadJournal?user_id=${user_id}`);
+    const result = await res.json();
 
-      if (!res.ok) return;
+    if (!result.success) return;
 
-      accounts.length = 0;
-      result.accounts.forEach(acc => {
-        accounts.push({
-          type: acc.type,
-          name: acc.name
-        });
-      });
+    const entries = result.entries;
+    const lines = result.lines;
 
-      updateAccountsUI();
-    } catch (err) {
-      console.log("Failed to load accounts");
-    }
+    journalEntries = entries.map(entry => {
+      const entryLines = lines
+        .filter(l => l.entry_id === entry.id)
+        .map(l => ({
+          account: l.accounts?.name || "",
+          debit: l.debit,
+          credit: l.credit
+        }));
+
+      return {
+        description: entry.description,
+        date: entry.date,
+        ref: entry.ref,
+        lines: entryLines
+      };
+    });
+
+    renderHistory(journalEntries);
   }
 
-  async function loadReferencesFromCloud() {
-    const user_id = localStorage.getItem("user_id");
-    if (!user_id) return;
-
-    try {
-      const res = await fetch(`/.netlify/functions/get-references?user_id=${user_id}`);
-      const result = await res.json();
-
-      if (!res.ok) return;
-
-      references.length = 0;
-      result.references.forEach(r => {
-        references.push(r.name);
-      });
-
-      updateAccountsUI();
-    } catch (err) {
-      console.log("Failed to load references");
-    }
-  }
-  // Initialize
+  // =============================
+  // INITIALIZE
+  // =============================
   ensureDefaultRows();
   updateTotals();
-
   loadAccountsFromCloud();
   loadReferencesFromCloud();
+  loadJournal();
+
+
   </script>
 </body>
 </html>
