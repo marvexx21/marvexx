@@ -1,1225 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  if (!localStorage.getItem("loggedIn")) {
-    window.location.href = "access.html";
+<meta charset="UTF-8">
+<title>Marvexx Financial – Access Dashboard</title>
+
+<style>
+  :root {
+    --accent: #3f5fa8;
+    --accent-dark: #2f447f;
+    --bg1: #eef1f8;
+    --bg2: #dfe4f2;
+    --text-main: #111;
+    --text-muted: #666;
+    --error: #d62828;
+    --radius: 12px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
-</script> 
- 
-  <meta charset="UTF-8" />
-  <title>Simple Accounting App</title>
 
+  * {
+    box-sizing: border-box;
+    font-family: "Inter", system-ui, sans-serif;
+  }
 
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-  <style>
-    :root {
-      --accent: #3f5fa8;       /* faded royal blue */
-      --accent-light: #e4e8f5; /* light blue-grey */
-      --bg-light: #f5f5f5;     /* light grey */
-      --border-light: #d0d0d0; /* light grey border */
-      --text-main: #111111;    /* black-ish text */
-      --text-muted: #555555;
-      --error: #8b0000;        /* dark red */
-      --success: #1b7a3a;
-      --shadow-soft: 0 4px 12px rgba(0,0,0,0.08);
-      --radius: 8px;
-    }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 40px;
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: white;
+    box-shadow: var(--shadow);
+  }
 
-    * {
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+  header .logo {
+    width: 54px;
+    height: 54px;
+    background-image: url('logo.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
 
-    body {
-      margin: 0;
-      background: #f0f2f7;
-      color: var(--text-main);
-    }
+  header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 600;
+  }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 32px;
-      background: linear-gradient(135deg, #2f447f, #3f5fa8);
-      color: white;
-      box-shadow: var(--shadow-soft);
-    }
+  .container {
+    width: 420px;
+    margin: 70px auto;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    padding: 40px 36px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.4s ease-out;
+  }
 
-    .logo {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-    .app-title {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-    }
+  h2 {
+    text-align: center;
+    color: var(--accent-dark);
+    font-size: 1.7rem;
+    margin-bottom: 25px;
+  }
 
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-    }
+  .field {
+    position: relative;
+    margin-bottom: 26px;
+  }
 
-    .nav-tab {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.12);
-      color: white;
-      cursor: pointer;
-      font-size: 13px;
-      transition: background 0.2s, transform 0.1s, box-shadow 0.1s;
-    }
+  .field input {
+    width: 100%;
+    padding: 16px 12px 10px;
+    border: 1px solid #cfd3df;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    background: white;
+    transition: 0.2s;
+  }
 
-    .nav-tab.active {
-      background: white;
-      color: var(--accent);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(63,95,168,0.15);
+    outline: none;
+  }
 
-    .nav-tab:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
-    }
+  .field label {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    transition: 0.2s;
+    pointer-events: none;
+  }
 
-    main {
-      padding: 24px 32px 40px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 10px;
+    background: white;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    color: var(--accent-dark);
+  }
 
-    .card {
-      background: white;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-soft);
-      padding: 20px 24px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(0,0,0,0.03);
-    }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 600;
+  }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
+  button:hover {
+    background: var(--accent-dark);
+  }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--accent);
-    }
+  .links {
+    text-align: center;
+    margin-top: 18px;
+  }
 
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
+  .links a {
+    color: var(--accent-dark);
+    text-decoration: none;
+    font-weight: 500;
+  }
 
-    .section-row {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
+  .links a:hover {
+    text-decoration: underline;
+  }
 
-    .section-col {
-      flex: 1 1 280px;
-      min-width: 260px;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      margin-bottom: 4px;
-      color: var(--text-muted);
-    }
-
-    input[type="text"],
-    input[type="date"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-light);
-      font-size: 13px;
-      outline: none;
-      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
-      background: #fafafa;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(63,95,168,0.18);
-      background: white;
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: white;
-      padding: 7px 14px;
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
-    }
-
-    .btn.secondary {
-      background: white;
-      color: var(--accent);
-    }
-
-    .btn.danger {
-      border-color: var(--error);
-      background: var(--error);
-    }
-
-    .btn.ghost {
-      border-color: transparent;
-      background: transparent;
-      color: var(--accent);
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .logout-btn {
-      padding: 8px 16px;
-      background: #c62828;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: #a51f1f;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--accent-light);
-      color: var(--accent);
-      font-size: 11px;
-    }
-
-    .status-text {
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .status-text.error {
-      color: var(--error);
-    }
-
-    .status-text.success {
-      color: var(--success);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin-top: 8px;
-    }
-
-    th, td {
-      border: 1px solid var(--border-light);
-      padding: 6px 8px;
-      text-align: left;
-      background: white;
-    }
-
-    th {
-      background: var(--accent-light);
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 12px;
-    }
-
-    td input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      padding: 4px 2px;
-      font-size: 13px;
-      outline: none;
-    }
-
-    td input:focus {
-      background: #f0f4ff;
-    }
-
-    .table-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .totals-row {
-      margin-top: 8px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 16px;
-      font-size: 13px;
-    }
-
-    .totals-row span {
-      min-width: 120px;
-      text-align: right;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: #f3f3f3;
-      color: var(--text-muted);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .error-text {
-      color: var(--error);
-      font-size: 12px;
-      margin-top: 4px;
-    }
-
-    .mini-note {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .flex-between {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .journal-description {
-      margin-top: 10px;
-    }
-
-    .journal-description textarea {
-      background: #fafafa;
-    }
-
-    .history-table {
-      max-height: 260px;
-      overflow: auto;
-      border-radius: 6px;
-      border: 1px solid var(--border-light);
-      margin-top: 8px;
-    }
-
-    .history-table table {
-      margin-top: 0;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: #f7f7f7;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .chip-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-    }
-
-    .kbd {
-      display: inline-block;
-      padding: 1px 5px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      background: #fdfdfd;
-      font-size: 10px;
-      font-family: "Consolas", monospace;
-      margin-right: 2px;
-    }
-
-    .dropdown-box {
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .dropdown-item {
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-
-    .dropdown-item:hover {
-      background: #e8eefc;
-    }
-
-    @media (max-width: 768px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      main {
-        padding: 16px 16px 28px;
-      }
-    }
-  </style>
+  .error-message {
+    color: var(--error);
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+    min-height: 20px;
+  }
+</style>
 </head>
+
 <body>
+
 <header>
-  <div class="logo-area">
-    <img src="logo.png" class="logo">
-    <div>
-      <div class="app-title">Marvexx Financial Journal</div>
-      <div style="font-size:11px; opacity:0.85;">Double-entry Accounting Tool</div>
-    </div>
-  </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-target="coa-view">Chart of Accounts</button>
-    <button class="nav-tab" data-target="journal-view">Journal</button>
-    <button class="nav-tab" data-target="history-view">Journal History</button>
-    <button id="logoutBtn" class="logout-btn">Logout</button>
-  </div>
+  <div class="logo"></div>
+  <h1>Marvexx Financial</h1>
 </header>
 
-<main>
-  <!-- COA VIEW -->
-  <section id="coa-view" class="view">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Chart of Accounts</div>
-          <div class="card-subtitle">Create accounts and references, and export your list.</div>
-        </div>
-        <div class="btn-group">
-          <button class="btn secondary" id="exportAccountsCsvBtn">Export CSV</button>
-          <button class="btn secondary" id="printAccountsBtn">Print / PDF</button>
-        </div>
-      </div>
+<div class="container">
+  <h2>Access Dashboard</h2>
 
-      <div class="section-row">
-        <div class="section-col">
-          <h4 style="margin:4px 0 8px;font-size:13px;color:var(--accent);">Create Account</h4>
-          <label>Type</label>
-          <select id="accountType">
-            <option value="asset">Asset</option>
-            <option value="liability">Liability</option>
-            <option value="equity">Equity</option>
-            <option value="revenue">Revenue</option>
-            <option value="expense">Expense</option>
-          </select>
+  <div id="errorBox" class="error-message"></div>
 
-          <label style="margin-top:8px;">Account Name</label>
-          <input type="text" id="accountName" placeholder="e.g. Cash, Accounts Receivable" />
-
-          <div style="margin-top:10px;" class="btn-group">
-            <button class="btn" id="addAccountBtn">Add Account</button>
-          </div>
-          <div id="accountStatus" class="status-text"></div>
-        </div>
-
-        <div class="section-col">
-          <h4 style="margin:4px 0 8px;font-size:13px;color:var(--accent);">Create Reference</h4>
-          <label>Reference Name</label>
-          <input type="text" id="referenceName" placeholder="e.g. INV-001, PO-2024-10" />
-          <div style="margin-top:10px;" class="btn-group">
-            <button class="btn" id="addReferenceBtn">Add Reference</button>
-          </div>
-          <div id="referenceStatus" class="status-text"></div>
-        </div>
-      </div>
+  <form onsubmit="loginUser(event)">
+    <div class="field">
+      <input type="email" id="email" placeholder=" " required>
+      <label>Email Address</label>
     </div>
 
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">My Accounts</div>
-          <div class="card-subtitle">All accounts grouped by type.</div>
-        </div>
-        <span class="badge" id="accountsCountBadge">0 accounts</span>
-      </div>
-      <div class="section-row">
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">Assets</h4>
-          <ul id="assetsList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">Liabilities</h4>
-          <ul id="liabilitiesList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">Equity</h4>
-          <ul id="equityList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-      </div>
-      <div class="section-row" style="margin-top:12px;">
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">Revenue</h4>
-          <ul id="revenueList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">Expenses</h4>
-          <ul id="expensesList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-        <div class="section-col">
-          <h4 style="font-size:13px;margin:0 0 4px;">References</h4>
-          <ul id="referencesList" style="margin:0;padding-left:18px;font-size:13px;"></ul>
-        </div>
-      </div>
+    <div class="field">
+      <input type="password" id="password" placeholder=" " required>
+      <label>Password</label>
     </div>
-  </section>
 
-  <!-- JOURNAL VIEW -->
-  <section id="journal-view" class="view hidden">
-    <div class="card">
-      <div class="card-header flex-between">
-        <div>
-          <div class="card-title">Journal Entry</div>
-          <div class="card-subtitle">
-            Use <span class="kbd">Tab</span> / <span class="kbd">Shift+Tab</span> to move horizontally,
-            arrows to move, <span class="kbd">Enter</span> to move down.
-          </div>
-        </div>
-        <div class="btn-group">
-          <button class="btn secondary" id="addLineBtn">+ Line</button>
-          <button class="btn secondary" id="deleteLineBtn">− Line</button>
-        </div>
-      </div>
+    <button type="submit">Access Dashboard</button>
+  </form>
 
-      <div class="table-toolbar">
-        <div class="chip">
-          <span class="chip-dot"></span>
-          Double-entry enforced (debits must equal credits)
-        </div>
-        <div class="btn-group">
-          <button class="btn" id="saveEntryBtn" disabled>Save Entry</button>
-          <button class="btn ghost" id="clearEntryBtn">Clear</button>
-          <button class="btn danger" id="cancelEntryBtn">Cancel / Close</button>
-        </div>
-      </div>
-
-      <table id="journalTable">
-        <thead>
-          <tr>
-            <th style="width:120px;">Date</th>
-            <th>Account</th>
-            <th style="width:120px;">Ref.</th>
-            <th style="width:120px;">Debit</th>
-            <th style="width:120px;">Credit</th>
-          </tr>
-        </thead>
-        <tbody id="journalBody">
-          <!-- Default two lines will be inserted by JS -->
-        </tbody>
-      </table>
-
-      <div class="totals-row">
-        <span id="totalDebitLabel">Total Debit: $0.0</span>
-        <span id="totalCreditLabel">Total Credit: $0.0</span>
-      </div>
-      <div id="journalError" class="error-text"></div>
-
-      <div class="journal-description">
-        <label>Description</label>
-        <textarea id="journalDescription" placeholder="Describe this entry..."></textarea>
-        <div class="mini-note">
-          Right-click on <strong>Account</strong> to filter by type, and on <strong>Debit/Credit</strong> to edit.
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HISTORY VIEW -->
-  <section id="history-view" class="view hidden">
-    <div class="card">
-      <div class="card-header">
-        <div>
-          <div class="card-title">Journal History</div>
-          <div class="card-subtitle">All saved entries. Export or print as needed.</div>
-        </div>
-        <div class="btn-group">
-          <button class="btn secondary" id="exportHistoryCsvBtn">Export CSV</button>
-          <button class="btn secondary" id="printHistoryBtn">Print / PDF</button>
-        </div>
-      </div>
-
-      <div style="margin-bottom: 10px;">
-        <label>From: <input type="date" id="filterFrom"></label>
-        <label>To: <input type="date" id="filterTo"></label>
-        <button id="filterBtn">Filter</button>
-      </div>
-
-
-      <div class="history-table">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:120px;">Date</th>
-              <th>Account</th>
-              <th style="width:120px;">Ref.</th>
-              <th style="width:120px;">Debit</th>
-              <th style="width:120px;">Credit</th>
-            </tr>
-          </thead>
-          <tbody id="historyBody">
-            <!-- Filled by JS -->
-          </tbody>
-        </table>
-      </div>
-      <div class="mini-note">
-        Entries are stored in memory only (no real cloud). Refreshing the page will clear them.
-      </div>
-    </div>
-  </section>
-</main>
+  <div class="links">
+    <p>Don’t have an account? <a href="register.html">Create Account</a></p>
+    <p><a href="forgot.html">Forgot Password?</a></p>
+  </div>
+</div>
 
 <script>
-  // In-memory data
-  const accounts = [];
-  const references = [];
-  const journalEntries = [];
+async function loginUser(event) {
+  event.preventDefault();
 
-  // Helpers
-  function showStatus(el, msg, isError = false) {
-    el.textContent = msg;
-    el.classList.remove('error', 'success');
-    if (!msg) return;
-    el.classList.add(isError ? 'error' : 'success');
-  }
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const errorBox = document.getElementById("errorBox");
 
-  function updateAccountsUI() {
-    const groups = {
-      asset: document.getElementById('assetsList'),
-      liability: document.getElementById('liabilitiesList'),
-      equity: document.getElementById('equityList'),
-      revenue: document.getElementById('revenueList'),
-      expense: document.getElementById('expensesList')
-    };
-    Object.values(groups).forEach(ul => ul.innerHTML = '');
-    accounts.forEach(acc => {
-      const li = document.createElement('li');
-      li.textContent = acc.name;
-      groups[acc.type].appendChild(li);
-    });
-    const refList = document.getElementById('referencesList');
-    refList.innerHTML = '';
-    references.forEach(r => {
-      const li = document.createElement('li');
-      li.textContent = r;
-      refList.appendChild(li);
-    });
-    document.getElementById('accountsCountBadge').textContent =
-      accounts.length + ' accounts';
-  }
+  errorBox.textContent = "";
 
-  function formatMoney(value) {
-    if (!value || isNaN(value)) return '';
-    return '$' + Number(value).toFixed(1);
-  }
-
-  function parseMoney(value) {
-    if (!value) return 0;
-    return parseFloat(String(value).replace(/[^0-9.-]/g, '')) || 0;
-  }
-
-  // Navigation tabs
-  document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.getAttribute('data-target');
-      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-      document.getElementById(target).classList.remove('hidden');
-    });
-  });
-  
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    const sure = confirm("Are you sure you want to log out?");
-    if (!sure) return;
-
-    // Clear login state
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("email");
-    localStorage.removeItem("plan");
-
-    // Redirect to homepage or login page
-    window.location.href = "index.html";
+  const response = await fetch("/.netlify/functions/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
   });
 
-  // COA logic
-  document.getElementById('addAccountBtn').addEventListener('click', async () => {
-    const type = document.getElementById('accountType').value;
-    const name = document.getElementById('accountName').value.trim();
-    const statusEl = document.getElementById('accountStatus');
+  const result = await response.json();
 
-    if (!name) {
-      showStatus(statusEl, 'Account name is required.', true);
-      return;
-    }
-
-    if (accounts.some(a => a.name.toLowerCase() === name.toLowerCase())) {
-      showStatus(statusEl, 'Account already exists.', true);
-      return;
-    }
-
-    try {
-      const user_id = localStorage.getItem("user_id");
-
-      const res = await fetch('/.netlify/functions/save-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id,
-          type,
-          name
-        })
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        showStatus(statusEl, result.error || 'Failed to save.', true);
-        return;
-      }
-
-      accounts.push({ type, name });
-      document.getElementById('accountName').value = '';
-      updateAccountsUI();
-      showStatus(statusEl, 'Saved to cloud.', false);
-    } catch {
-      showStatus(statusEl, 'Network error.', true);
-    }
-  });
-
-  document.getElementById('addReferenceBtn').addEventListener('click', async () => {
-    const name = document.getElementById('referenceName').value.trim();
-    const statusEl = document.getElementById('referenceStatus');
-
-    if (!name) {
-      showStatus(statusEl, 'Reference name is required.', true);
-      return;
-    }
-
-    if (references.some(r => r.toLowerCase() === name.toLowerCase())) {
-      showStatus(statusEl, 'Reference already exists.', true);
-      return;
-    }
-
-    try {
-      const user_id = localStorage.getItem("user_id");
-
-      const res = await fetch('/.netlify/functions/save-reference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id, name })
-      });
-
-      const result = await res.json();
-
-
-      if (!res.ok) {
-        showStatus(statusEl, result.error || 'Failed.', true);
-        return;
-      }
-
-      references.push(name);
-      document.getElementById('referenceName').value = '';
-      updateAccountsUI();
-      showStatus(statusEl, 'Saved to cloud.', false);
-    } catch {
-      showStatus(statusEl, 'Network error.', true);
-    }
-  });
-
-  // Export helpers
-  function downloadCsv(filename, rows) {
-    const csvContent = rows.map(r =>
-      r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
-    ).join('\r\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  document.getElementById('exportAccountsCsvBtn').addEventListener('click', () => {
-    const rows = [['Type', 'Account']];
-    accounts.forEach(a => rows.push([a.type, a.name]));
-    rows.push([]);
-    rows.push(['References']);
-    references.forEach(r => rows.push([r]));
-    downloadCsv('accounts.csv', rows);
-  });
-
-  document.getElementById('printAccountsBtn').addEventListener('click', () => {
-    window.print();
-  });
-
-  // Journal table
-  const journalBody = document.getElementById('journalBody');
-  const journalError = document.getElementById('journalError');
-  const saveEntryBtn = document.getElementById('saveEntryBtn');
-  const totalDebitLabel = document.getElementById('totalDebitLabel');
-  const totalCreditLabel = document.getElementById('totalCreditLabel');
-
-  function createDropdown(options, onSelect) {
-    const box = document.createElement('div');
-    box.className = 'dropdown-box';
-
-    options.forEach(opt => {
-      const item = document.createElement('div');
-      item.className = 'dropdown-item';
-      item.textContent = opt;
-      item.onclick = () => {
-        onSelect(opt);
-        box.remove();
-      };
-      box.appendChild(item);
-    });
-
-    document.body.appendChild(box);
-    return box;
-  }
-
-  function positionDropdown(input, box) {
-    const rect = input.getBoundingClientRect();
-    box.style.position = 'absolute';
-    box.style.left = rect.left + 'px';
-    box.style.top = rect.bottom + 'px';
-    box.style.width = rect.width + 'px';
-    box.style.zIndex = 9999;
-  }
-
-  function createJournalRow() {
-    const tr = document.createElement('tr');
-
-    const tdDate = document.createElement('td');
-    const dateInput = document.createElement('input');
-    dateInput.type = 'date';
-    dateInput.addEventListener('contextmenu', e => {
-      // Right-click: allow manual typing by switching type temporarily
-      e.preventDefault();
-      dateInput.type = 'text';
-      dateInput.placeholder = 'YYYY-MM-DD';
-    });
-    tdDate.appendChild(dateInput);
-
-    // ACCOUNT CELL
-    const tdAccount = document.createElement('td');
-    const accInput = document.createElement('input');
-    accInput.placeholder = 'Account';
-    tdAccount.appendChild(accInput);
-
-    // When clicking the input, show dropdown
-    accInput.addEventListener('click', () => {
-      // Remove any existing dropdown
-      document.querySelectorAll('.dropdown-box').forEach(d => d.remove());
-
-      // Step 1: Choose category
-      const categories = ['', 'asset', 'liability', 'equity', 'revenue', 'expense'];
-      const catBox = createDropdown(categories, category => {
-        // Step 2: Choose account from that category
-        const filtered = accounts.filter(a => a.type === category);
-        const names = filtered.map(a => a.name);
-
-        const accBox = createDropdown(names, chosen => {
-          accInput.value = chosen;
-        });
-
-        positionDropdown(accInput, accBox);
-      });
-
-      positionDropdown(accInput, catBox);
-    });
-
-    // REFERENCE CELL
-    const tdRef = document.createElement('td');
-    const refInput = document.createElement('input');
-    refInput.placeholder = 'Ref.';
-    tdRef.appendChild(refInput);
-
-    refInput.addEventListener('click', () => {
-      document.querySelectorAll('.dropdown-box').forEach(d => d.remove());
-
-      const box = createDropdown(references, chosen => {
-        refInput.value = chosen;
-      });
-
-      positionDropdown(refInput, box);
-    });
-
-    const tdDebit = document.createElement('td');
-    const debitInput = document.createElement('input');
-    debitInput.placeholder = '';
-    debitInput.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      debitInput.readOnly = false;
-      debitInput.focus();
-    });
-    debitInput.addEventListener('input', updateTotals);
-    tdDebit.appendChild(debitInput);
-
-    const tdCredit = document.createElement('td');
-    const creditInput = document.createElement('input');
-    creditInput.placeholder = '';
-    creditInput.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      creditInput.readOnly = false;
-      creditInput.focus();
-    });
-    creditInput.addEventListener('input', updateTotals);
-    tdCredit.appendChild(creditInput);
-
-    tr.appendChild(tdDate);
-    tr.appendChild(tdAccount);
-    tr.appendChild(tdRef);
-    tr.appendChild(tdDebit);
-    tr.appendChild(tdCredit);
-
-    return tr;
-  }
-
-  function ensureDefaultRows() {
-    while (journalBody.children.length < 2) {
-      journalBody.appendChild(createJournalRow());
-    }
-  }
-
-  function updateTotals() {
-    let totalDebit = 0;
-    let totalCredit = 0;
-    [...journalBody.querySelectorAll('tr')].forEach(tr => {
-      const debit = parseMoney(tr.children[3].querySelector('input').value);
-      const credit = parseMoney(tr.children[4].querySelector('input').value);
-      totalDebit += debit;
-      totalCredit += credit;
-    });
-    totalDebitLabel.textContent = 'Total Debit: ' + formatMoney(totalDebit);
-    totalCreditLabel.textContent = 'Total Credit: ' + formatMoney(totalCredit);
-
-    if (totalDebit === 0 && totalCredit === 0) {
-      journalError.textContent = '';
-      saveEntryBtn.disabled = true;
-      return;
-    }
-
-    if (totalDebit !== totalCredit) {
-      journalError.textContent = 'Debits and credits must be equal before saving.';
-      saveEntryBtn.disabled = true;
+  if (!result.success) {
+    if (result.error === "account_not_found") {
+      errorBox.textContent = "Account not found.";
+    } else if (result.error === "invalid_password") {
+      errorBox.textContent = "Account or password invalid.";
     } else {
-      journalError.textContent = '';
-      saveEntryBtn.disabled = false;
+      errorBox.textContent = "Invalid login.";
     }
+    return;
   }
 
-  document.getElementById('addLineBtn').addEventListener('click', () => {
-    journalBody.appendChild(createJournalRow());
-  });
+  localStorage.setItem("loggedIn", "true");
+  localStorage.setItem("user_id", result.user.id);
+  localStorage.setItem("email", result.user.email);
 
-  document.getElementById('deleteLineBtn').addEventListener('click', () => {
-    if (journalBody.children.length > 2) {
-      journalBody.removeChild(journalBody.lastElementChild);
-      updateTotals();
-    }
-  });
+  window.location.href = "comingsoon.html";
+}
+</script>
 
-  document.getElementById('clearEntryBtn').addEventListener('click', () => {
-    journalBody.innerHTML = '';
-    ensureDefaultRows();
-    document.getElementById('journalDescription').value = '';
-    updateTotals();
-  });
-
-  document.getElementById('cancelEntryBtn').addEventListener('click', () => {
-    const sure = confirm('Are you sure you want to close? Unsaved data will be lost.');
-    if (!sure) return;
-    // Simulate going "home" by switching to COA tab
-    document.querySelector('.nav-tab[data-target="coa-view"]').click();
-  });
-
-  document.getElementById('saveEntryBtn').addEventListener('click', async () => {
-    let totalDebit = 0;
-    let totalCredit = 0;
-    const lines = [];
-
-    [...journalBody.querySelectorAll('tr')].forEach(tr => {
-      const date = tr.children[0].querySelector('input').value;
-      const account = tr.children[1].querySelector('input').value.trim();
-      const ref = tr.children[2].querySelector('input').value.trim();
-      const debit = parseMoney(tr.children[3].querySelector('input').value);
-      const credit = parseMoney(tr.children[4].querySelector('input').value);
-
-      if (!date && !account && !ref && !debit && !credit) return;
-
-      lines.push({ date, account, ref, debit, credit });
-      totalDebit += debit;
-      totalCredit += credit;
-    });
-
-    if (!lines.length) {
-      alert('No lines to save.');
-      return;
-    }
-
-    if (totalDebit !== totalCredit) {
-      alert('Debits and credits must be equal.');
-      return;
-    }
-
-    const description = document.getElementById('journalDescription').value.trim();
-
-    try {
-      const user_id = localStorage.getItem("user_id");
-
-      const res = await fetch('/.netlify/functions/save-journal', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id, name })
-      });
-
-      const result = await res.json();
-
-
-      if (!res.ok) {
-        alert(result.error || 'Failed to save entry.');
-        return;
-      }
-
-      document.getElementById('clearEntryBtn').click();
-      alert('Entry saved to cloud.');
-    } catch (err) {
-      alert('Network error. Entry not saved.');
-    }
-  });
-
-  // Keyboard navigation: Tab/Shift+Tab/Arrows/Enter handled by browser mostly.
-  // We just ensure Delete clears cell.
-  journalBody.addEventListener('keydown', e => {
-    if (e.key === 'Delete') {
-      const target = e.target;
-      if (target.tagName === 'INPUT') {
-        target.value = '';
-        updateTotals();
-      }
-    }
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      // Move to same column next row
-      const inputs = [...journalBody.querySelectorAll('input')];
-      const idx = inputs.indexOf(e.target);
-      if (idx >= 0) {
-        const cols = 5;
-        const nextIdx = idx + cols;
-        if (nextIdx < inputs.length) {
-          inputs[nextIdx].focus();
-        } else {
-          // Add new row if needed
-          const newRow = createJournalRow();
-          journalBody.appendChild(newRow);
-          const newInputs = [...journalBody.querySelectorAll('input')];
-          newInputs[nextIdx]?.focus();
-        }
-      }
-    }
-  });
-
-  // History
-  function renderHistory(filteredEntries) {
-    // Fallback if nothing was passed or storage is empty
-    if (!Array.isArray(filteredEntries)) {
-      filteredEntries = Array.isArray(journalEntries) ? journalEntries : [];
-    }
-
-    const tbody = document.getElementById('historyBody');
-    tbody.innerHTML = '';
-
-    filteredEntries.forEach(entry => {
-      if (!entry || !Array.isArray(entry.lines)) return;
-
-      entry.lines.forEach(line => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${line.date || ''}</td>
-          <td>${line.account || ''}</td>
-          <td>${line.ref || ''}</td>
-          <td>${line.debit && line.debit !== 0 ? formatMoney(line.debit) : ''}</td>
-          <td>${line.credit && line.credit !== 0 ? formatMoney(line.credit) : ''}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const descRow = document.createElement('tr');
-      descRow.innerHTML = `<td colspan="5"><em>${entry.description || ''}</em></td>`;
-      tbody.appendChild(descRow);
-
-      const spacer = document.createElement('tr');
-      spacer.innerHTML = `<td colspan="5">&nbsp;</td>`;
-      tbody.appendChild(spacer);
-    });
-  }
-
-  document.getElementById('exportHistoryCsvBtn').addEventListener('click', () => {
-    const rows = [['Date', 'Account', 'Ref', 'Debit', 'Credit']];
-
-    journalEntries.forEach(entry => {
-      entry.lines.forEach(line => {
-        rows.push([
-          line.date || '',
-          line.account || '',
-          line.ref || '',
-          line.debit && line.debit !== 0 ? line.debit : '',
-          line.credit && line.credit !== 0 ? line.credit : ''
-        ]);
-      });
-
-      // Description row under ACCOUNT column
-      rows.push([
-        '', 
-        entry.description || '',  // <-- description now under Account column
-        '', 
-        '', 
-        ''
-      ]);
-
-      // Blank row between entries
-      rows.push(['', '', '', '', '']);
-    });
-
-    downloadCsv('journal_history.csv', rows);
-  });
-
-  document.getElementById('filterBtn').addEventListener('click', () => {
-    const from = document.getElementById('filterFrom').value;
-    const to = document.getElementById('filterTo').value;
-
-    const filtered = journalEntries.filter(entry => {
-      const entryDate = entry.lines[0]?.date;
-      if (!entryDate) return false;
-
-      if (from && entryDate < from) return false;
-      if (to && entryDate > to) return false;
-
-      return true;
-    });
-
-    renderHistory(filtered);
-  });
-
-
-  document.getElementById('printHistoryBtn').addEventListener('click', () => {
-    window.print();
-  });
-  // =============================
-  // LOAD DATA FROM CLOUD
-  // =============================
-
-  async function loadAccountsFromCloud() {
-    const user_id = localStorage.getItem("user_id");
-    if (!user_id) return;
-
-    try {
-      const res = await fetch(`/.netlify/functions/get-accounts?user_id=${user_id}`);
-      const result = await res.json();
-
-      if (!res.ok) return;
-
-      accounts.length = 0;
-      result.accounts.forEach(acc => {
-        accounts.push({
-          type: acc.type,
-          name: acc.name
-        });
-      });
-
-      updateAccountsUI();
-    } catch (err) {
-      console.log("Failed to load accounts");
-    }
-  }
-
-  async function loadReferencesFromCloud() {
-    const user_id = localStorage.getItem("user_id");
-    if (!user_id) return;
-
-    try {
-      const res = await fetch(`/.netlify/functions/get-references?user_id=${user_id}`);
-      const result = await res.json();
-
-      if (!res.ok) return;
-
-      references.length = 0;
-      result.references.forEach(r => {
-        references.push(r.name);
-      });
-
-      updateAccountsUI();
-    } catch (err) {
-      console.log("Failed to load references");
-    }
-  }
-  // Initialize
-  ensureDefaultRows();
-  updateTotals();
-
-  loadAccountsFromCloud();
-  loadReferencesFromCloud();
-  </script>
 </body>
 </html>
