@@ -7,9 +7,9 @@ const supabase = createClient(
 
 exports.handler = async (event) => {
   try {
-    const { user_id, description, lines } = JSON.parse(event.body || "{}")
+    const { user_id, description, date, ref, lines } = JSON.parse(event.body || "{}")
 
-    if (!user_id || !description || !lines || !lines.length) {
+    if (!user_id || !description || !date || !lines || !lines.length) {
       return {
         statusCode: 400,
         body: JSON.stringify({ success: false, error: "Missing fields" })
@@ -19,7 +19,7 @@ exports.handler = async (event) => {
     // Insert journal entry
     const { data: entryData, error: entryError } = await supabase
       .from('journal_entries')
-      .insert([{ user_id, description }])
+      .insert([{ user_id, description, date, ref }])
       .select()
       .single()
 
@@ -30,7 +30,8 @@ exports.handler = async (event) => {
     // Prepare journal lines
     const lineRows = lines.map(l => ({
       entry_id,
-      account_name: l.account_name,
+      user_id,
+      account_id: l.account_id,
       debit: l.debit,
       credit: l.credit
     }))
